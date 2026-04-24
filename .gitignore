@@ -23,3 +23,6 @@ Thumbs.db
 # IDE
 .vscode/
 .idea/
+vgu_*
+add_*_connector.py
+update_claude_config.py
