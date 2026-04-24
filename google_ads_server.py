@@ -277,7 +277,7 @@ async def list_accounts() -> str:
 
 @mcp.tool()
 async def execute_gaql_query(
-    customer_id: str = Field(description="Google Ads customer ID (10 digits, no dashes). Example: '9873186703'"),
+    customer_id: str = Field(description="Google Ads customer ID (10 digits, no dashes). Example: '1234567890'"),
     query: str = Field(description="Valid GAQL query string following Google Ads Query Language syntax")
 ) -> str:
     """
@@ -340,7 +340,7 @@ async def execute_gaql_query(
 
 @mcp.tool()
 async def get_campaign_performance(
-    customer_id: str = Field(description="Google Ads customer ID (10 digits, no dashes). Example: '9873186703'"),
+    customer_id: str = Field(description="Google Ads customer ID (10 digits, no dashes). Example: '1234567890'"),
     days: int = Field(default=30, description="Number of days to look back (7, 30, 90, etc.)")
 ) -> str:
     """
@@ -373,7 +373,7 @@ async def get_campaign_performance(
 
 @mcp.tool()
 async def get_ad_performance(
-    customer_id: str = Field(description="Google Ads customer ID (10 digits, no dashes). Example: '9873186703'"),
+    customer_id: str = Field(description="Google Ads customer ID (10 digits, no dashes). Example: '1234567890'"),
     days: int = Field(default=30, description="Number of days to look back (7, 30, 90, etc.)")
 ) -> str:
     """
@@ -402,7 +402,7 @@ async def get_ad_performance(
 
 @mcp.tool()
 async def run_gaql(
-    customer_id: str = Field(description="Google Ads customer ID (10 digits, no dashes). Example: '9873186703'"),
+    customer_id: str = Field(description="Google Ads customer ID (10 digits, no dashes). Example: '1234567890'"),
     query: str = Field(description="Valid GAQL query string following Google Ads Query Language syntax"),
     format: str = Field(default="table", description="Output format: 'table', 'json', or 'csv'")
 ) -> str:
@@ -507,7 +507,7 @@ async def run_gaql(
 
 @mcp.tool()
 async def get_ad_creatives(
-    customer_id: str = Field(description="Google Ads customer ID (10 digits, no dashes). Example: '9873186703'")
+    customer_id: str = Field(description="Google Ads customer ID (10 digits, no dashes). Example: '1234567890'")
 ) -> str:
     """
     Get ad creative details including headlines, descriptions, and URLs.
@@ -587,7 +587,7 @@ async def get_ad_creatives(
 
 @mcp.tool()
 async def get_account_currency(
-    customer_id: str = Field(description="Google Ads customer ID (10 digits, no dashes). Example: '9873186703'")
+    customer_id: str = Field(description="Google Ads customer ID (10 digits, no dashes). Example: '1234567890'")
 ) -> str:
     """
     Retrieve the default currency code used by the Google Ads account.
@@ -640,7 +640,7 @@ async def get_account_currency(
 
 @mcp.tool()
 async def get_image_assets(
-    customer_id: str = Field(description="Google Ads customer ID (10 digits, no dashes). Example: '9873186703'"),
+    customer_id: str = Field(description="Google Ads customer ID (10 digits, no dashes). Example: '1234567890'"),
     limit: int = Field(default=50, description="Maximum number of image assets to return")
 ) -> str:
     """
@@ -708,7 +708,7 @@ async def get_image_assets(
 
 @mcp.tool()
 async def download_image_asset(
-    customer_id: str = Field(description="Google Ads customer ID (10 digits, no dashes). Example: '9873186703'"),
+    customer_id: str = Field(description="Google Ads customer ID (10 digits, no dashes). Example: '1234567890'"),
     asset_id: str = Field(description="The ID of the image asset to download"),
     output_dir: str = Field(default="./ad_images", description="Directory to save the downloaded image")
 ) -> str:
@@ -785,7 +785,7 @@ async def download_image_asset(
 
 @mcp.tool()
 async def get_asset_usage(
-    customer_id: str = Field(description="Google Ads customer ID (10 digits, no dashes). Example: '9873186703'"),
+    customer_id: str = Field(description="Google Ads customer ID (10 digits, no dashes). Example: '1234567890'"),
     asset_id: str = Field(default=None, description="Optional: specific asset ID to look up"),
     asset_type: str = Field(default="IMAGE", description="Asset type: 'IMAGE', 'TEXT', 'VIDEO', etc.")
 ) -> str:
@@ -881,7 +881,7 @@ async def get_asset_usage(
 
 @mcp.tool()
 async def analyze_image_assets(
-    customer_id: str = Field(description="Google Ads customer ID (10 digits, no dashes). Example: '9873186703'"),
+    customer_id: str = Field(description="Google Ads customer ID (10 digits, no dashes). Example: '1234567890'"),
     days: int = Field(default=30, description="Number of days to look back (7, 30, 90, etc.)")
 ) -> str:
     """
@@ -974,7 +974,7 @@ async def analyze_image_assets(
 
 @mcp.tool()
 async def list_resources(
-    customer_id: str = Field(description="Google Ads customer ID (10 digits, no dashes). Example: '9873186703'")
+    customer_id: str = Field(description="Google Ads customer ID (10 digits, no dashes). Example: '1234567890'")
 ) -> str:
     """List valid resources that can be used in GAQL FROM clauses."""
     query = """
@@ -995,7 +995,7 @@ async def list_resources(
 
 @mcp.tool()
 async def get_asset_performance(
-    customer_id: str = Field(description="Google Ads customer ID (10 digits, no dashes). Example: '9873186703'"),
+    customer_id: str = Field(description="Google Ads customer ID (10 digits, no dashes). Example: '1234567890'"),
     days: int = Field(default=30, description="Number of days to look back (7, 14, 30, 90)"),
     asset_type: str = Field(default="ALL", description="Filter by asset type: 'HEADLINE', 'DESCRIPTION', 'IMAGE', 'VIDEO', 'ALL'"),
     campaign_name_contains: str = Field(default="", description="Optional: filter by campaign name (partial match)")
