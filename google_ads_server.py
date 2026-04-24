@@ -1885,7 +1885,7 @@ async def get_video_performance(
 
 @mcp.tool()
 async def get_cross_account_report(
-    customer_ids: str = Field(description="Comma-separated list of Google Ads customer IDs. Example: '9873186703,4107864898'"),
+    customer_ids: str = Field(description="Comma-separated list of Google Ads customer IDs. Example: 'ID1,ID2'"),
     report_type: str = Field(default="campaign", description="Report type: 'campaign', 'ad_group', 'keyword', 'asset'"),
     days: int = Field(default=30, description="Number of days to look back (7, 14, 30, 90)"),
     top_n: int = Field(default=10, description="Top N items per account to include")
