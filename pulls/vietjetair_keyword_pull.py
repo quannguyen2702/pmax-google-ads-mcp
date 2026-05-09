@@ -1,21 +1,5 @@
 #!/usr/bin/env python3
-"""
-Keyword Puller — Generic Template
-Pull keywords từ Google Keyword Planner API, output CSV cho Duy's Keyword Analysis Agent.
-
-Usage:
-    1. Sửa CONFIG section bên dưới cho client của bạn
-    2. Chạy:
-       macOS/Linux: .venv/bin/python keyword_pull.py
-       Windows:     .venv\Scripts\python keyword_pull.py
-    3. Import output CSV vào Google Sheets → feed Duy's Agent
-
-Số keyword output phụ thuộc vào CONFIG:
-- Mỗi seed group trả max 100 keywords
-- Tổng raw = số seed groups × số geo levels × số time ranges × 100
-- Sau dedup/filter: thường còn 40-60% raw
-- Muốn ít hơn → bớt seed groups. Muốn nhiều hơn → thêm seed groups.
-"""
+"""Keyword Puller — Vietjet Air (Aviation) — Multi-country, multi-language"""
 
 import os, json, re, csv, time
 from dotenv import load_dotenv
@@ -25,71 +9,210 @@ import requests
 
 load_dotenv()
 
-# ╔═══════════════════════════════════════════════════════════╗
-# ║  CONFIG — SỬA TOÀN BỘ PHẦN NÀY CHO CLIENT CỦA BẠN      ║
-# ║                                                           ║
-# ║  Xóa hết comment ví dụ, thay bằng data client bạn.       ║
-# ╚═══════════════════════════════════════════════════════════╝
+CLIENT_NAME = "VietjetAir"
+CUSTOMER_ID = "8409563791"
+OUTPUT_FILE = ""
 
-# --- CLIENT INFO ---
-CLIENT_NAME = ""                       # Ví dụ: "Vinuni", "MasteriseHomes", "FECredit"
-CUSTOMER_ID = ""                       # Google Ads customer ID, 10 chữ số, không dashes
-OUTPUT_FILE = ""                       # Để trống = auto: clientname_keywords_full.csv
-
-# --- GEO TARGETS ---
-# Key = label hiển thị, Value = list criterion IDs
-# Tìm ID: dùng search_geo_targets trong Claude, hoặc xem bảng cuối file
 GEO = {
-    # "Vietnam": ["2704"],
-    # "HCM+BD": ["9040373", "9047166"],
+    "Vietnam": ["2704"],
+    "HCM": ["9040373"],
+    "HaNoi": ["9040331"],
+    "Kazakhstan": ["2398"],
+    "Almaty": ["9063099"],
+    "Astana": ["1009806"],
+    "Czechia": ["2203"],
+    "Prague": ["1003803"],
 }
 
-# --- TIME RANGES ---
-# (label, start_year, start_month, end_year, end_month)
 RANGES = [
-    ("2024", 2024, 1, 2024, 12),
-    ("2025", 2025, 1, 2025, 12),
+    ("2025-2026", 2025, 5, 2026, 4),
 ]
 
-# --- SEEDS ---
-# Mỗi angle: "lang" + list "seeds" (pipe-separated, max 10 kw/group, max 100 results/group)
-# Angle names tùy bạn đặt: Brand, Programs, Generic, Competitor, EN, Product, Feature...
-#
-# EDUCATION example:
-#   "Brand": {"lang":"1040", "seeds":["tên trường|viết tắt|tên tiếng anh"]}
-#   "Programs": {"lang":"1040", "seeds":["ngành QTKD|ngành KHMT|ngành kiến trúc"]}
-#
-# REAL ESTATE example:
-#   "Brand": {"lang":"1040", "seeds":["masterise homes|the global city"]}
-#   "Product": {"lang":"1040", "seeds":["căn hộ quận 2|penthouse thảo điền"]}
-#
-# FINANCE example:
-#   "Brand": {"lang":"1040", "seeds":["fe credit|vay fe credit"]}
-#   "Product": {"lang":"1040", "seeds":["vay tiền online|vay tiêu dùng|vay trả góp"]}
 SEED_GROUPS = {
-    # "Brand": {
-    #     "lang": "1040",
-    #     "seeds": [
-    #         "keyword1|keyword2|keyword3",
-    #     ]
-    # },
+    # === BRAND ===
+    "Brand_VI": {
+        "lang": "1040",
+        "seeds": [
+            "vietjet|vietjet air|vé máy bay vietjet|vietjet khuyến mãi|vietjet giá rẻ|đặt vé vietjet",
+            "vietjet air khuyến mãi|vietjet bay quốc tế|vietjet đường bay mới|vietjet 2026",
+        ]
+    },
+    "Brand_EN": {
+        "lang": "1000",
+        "seeds": [
+            "vietjet|vietjet air|vietjet flight|vietjet booking|vietjet promotion|vietjet international",
+            "vietjet air review|vietjet baggage|vietjet check in|vietjet air booking",
+        ]
+    },
+    "Brand_RU": {
+        "lang": "1031",
+        "seeds": [
+            "vietjet|vietjet air|вьетджет|вьетджет эйр|билеты вьетджет|вьетджет отзывы",
+        ]
+    },
+
+    # === ROUTE: VN → KAZ (Vietnamese market) ===
+    "VN_KAZ_VI": {
+        "lang": "1040",
+        "seeds": [
+            "vé máy bay đi kazakhstan|bay đi almaty|vé máy bay almaty|vé máy bay astana|bay việt nam kazakhstan",
+            "du lịch kazakhstan|tour kazakhstan|kazakhstan có gì|almaty du lịch|astana du lịch",
+            "visa kazakhstan|xin visa kazakhstan|kazakhstan có cần visa không|thời tiết kazakhstan",
+        ]
+    },
+
+    # === ROUTE: VN → CZK (Vietnamese market) ===
+    "VN_CZK_VI": {
+        "lang": "1040",
+        "seeds": [
+            "vé máy bay đi séc|vé máy bay prague|bay đi praha|vé máy bay cộng hòa séc|bay việt nam séc",
+            "du lịch séc|tour séc|du lịch prague|prague có gì|cộng hòa séc du lịch",
+            "visa séc|xin visa séc|visa schengen|visa châu âu|thời tiết prague",
+        ]
+    },
+
+    # === ROUTE: KAZ → VN (Kazakhstan market — Russian) ===
+    "KAZ_VN_RU": {
+        "lang": "1031",
+        "seeds": [
+            "авиабилеты во вьетнам|билеты вьетнам|рейсы во вьетнам|перелёт во вьетнам|вьетнам из казахстана",
+            "вьетнам отдых|тур во вьетнам|вьетнам из алматы|вьетнам из астаны|прямой рейс вьетнам",
+            "виза во вьетнам|нужна ли виза во вьетнам|вьетнам безвиз|вьетнам погода",
+        ]
+    },
+    "KAZ_VN_EN": {
+        "lang": "1000",
+        "seeds": [
+            "flights to vietnam|vietnam flights from kazakhstan|cheap flights vietnam|almaty to vietnam|astana to vietnam",
+            "vietnam travel|vietnam tourism|vietnam visa|vietnam holiday|direct flight vietnam",
+        ]
+    },
+
+    # === ROUTE: KAZ → CZK (Kazakhstan market — Russian) ===
+    "KAZ_CZK_RU": {
+        "lang": "1031",
+        "seeds": [
+            "авиабилеты в прагу|билеты прага|рейсы в чехию|перелёт в прагу|прага из казахстана",
+            "прага отдых|тур в прагу|чехия туризм|прага из алматы|прага из астаны",
+        ]
+    },
+    "KAZ_CZK_EN": {
+        "lang": "1000",
+        "seeds": [
+            "flights to prague|prague flights from kazakhstan|cheap flights prague|almaty to prague|astana to prague",
+        ]
+    },
+
+    # === ROUTE: CZK → VN (Czech market — Czech) ===
+    "CZK_VN_CZ": {
+        "lang": "1021",
+        "seeds": [
+            "letenky do vietnamu|lety vietnam|vietnam letenky|levné letenky vietnam|přímý let vietnam",
+            "vietnam dovolená|vietnam turistika|vietnam víza|vietnam počasí|zájezd vietnam",
+        ]
+    },
+    "CZK_VN_EN": {
+        "lang": "1000",
+        "seeds": [
+            "flights to vietnam from prague|cheap flights vietnam|prague to vietnam|direct flight vietnam|vietnam flights europe",
+        ]
+    },
+
+    # === ROUTE: CZK → KAZ (Czech market) ===
+    "CZK_KAZ_CZ": {
+        "lang": "1021",
+        "seeds": [
+            "letenky do kazachstánu|lety almaty|kazachstán letenky|praha almaty|praha astana",
+        ]
+    },
+
+    # === GENERIC FLIGHTS ===
+    "Generic_Flight_VI": {
+        "lang": "1040",
+        "seeds": [
+            "vé máy bay giá rẻ|vé máy bay quốc tế|đặt vé máy bay|vé máy bay khuyến mãi|săn vé máy bay giá rẻ",
+            "vé máy bay châu âu|vé máy bay trung á|bay thẳng quốc tế|hãng bay giá rẻ",
+        ]
+    },
+    "Generic_Flight_RU": {
+        "lang": "1031",
+        "seeds": [
+            "дешёвые авиабилеты|купить авиабилеты|авиабилеты онлайн|бюджетные авиалинии|лоукостер",
+            "прямые рейсы из алматы|прямые рейсы из астаны|международные рейсы казахстан",
+        ]
+    },
+    "Generic_Flight_CZ": {
+        "lang": "1021",
+        "seeds": [
+            "levné letenky|letenky online|nízkonákladové aerolinky|přímé lety z prahy|letenky akce",
+        ]
+    },
+    "Generic_Flight_EN": {
+        "lang": "1000",
+        "seeds": [
+            "cheap flights|budget airline|low cost carrier|book flights online|flight deals|international flights",
+        ]
+    },
+
+    # === COMPETITORS ===
+    "Comp_AirAstana_RU": {
+        "lang": "1031",
+        "seeds": [
+            "эйр астана|air astana|билеты air astana|air astana отзывы|air astana рейсы|air astana акции",
+        ]
+    },
+    "Comp_FlyArystan_RU": {
+        "lang": "1031",
+        "seeds": [
+            "fly arystan|флай арыстан|билеты fly arystan|fly arystan рейсы|fly arystan отзывы",
+        ]
+    },
+    "Comp_VietnamAirlines_VI": {
+        "lang": "1040",
+        "seeds": [
+            "vietnam airlines|vé vietnam airlines|vietnam airlines quốc tế|vietnam airlines khuyến mãi|đặt vé vietnam airlines",
+        ]
+    },
+    "Comp_Turkish_EN": {
+        "lang": "1000",
+        "seeds": [
+            "turkish airlines|turkish airlines flights|turkish airlines review|turkish airlines transit|istanbul transit",
+        ]
+    },
+    "Comp_Czech_CZ": {
+        "lang": "1021",
+        "seeds": [
+            "czech airlines|čsa letenky|lot polish airlines|lot letenky|lot airlines praha",
+        ]
+    },
 }
 
-# --- GEO PULL STRATEGY ---
-# "all" = pull tất cả geo levels | ["Vietnam"] = chỉ country | ["Vietnam","HCM"] = 2 levels
-# Angle không có trong dict → mặc định chỉ pull geo level đầu tiên
+
 GEO_STRATEGY = {
-    # "Brand": "all",
-    # "Generic": ["Vietnam", "HCM"],
-    # "Competitor": ["Vietnam"],
+    "Brand_VI": ["Vietnam", "HCM", "HaNoi"],
+    "Brand_EN": ["Kazakhstan", "Almaty", "Astana", "Czechia", "Prague"],
+    "Brand_RU": ["Kazakhstan", "Almaty", "Astana"],
+    "VN_KAZ_VI": ["Vietnam", "HCM", "HaNoi"],
+    "VN_CZK_VI": ["Vietnam", "HCM", "HaNoi"],
+    "KAZ_VN_RU": ["Kazakhstan", "Almaty", "Astana"],
+    "KAZ_VN_EN": ["Kazakhstan", "Almaty", "Astana"],
+    "KAZ_CZK_RU": ["Kazakhstan", "Almaty", "Astana"],
+    "KAZ_CZK_EN": ["Kazakhstan", "Almaty", "Astana"],
+    "CZK_VN_CZ": ["Czechia", "Prague"],
+    "CZK_VN_EN": ["Czechia", "Prague"],
+    "CZK_KAZ_CZ": ["Czechia", "Prague"],
+    "Generic_Flight_VI": ["Vietnam"],
+    "Generic_Flight_RU": ["Kazakhstan", "Almaty", "Astana"],
+    "Generic_Flight_CZ": ["Czechia", "Prague"],
+    "Generic_Flight_EN": ["Kazakhstan", "Czechia"],
+    "Comp_AirAstana_RU": ["Kazakhstan", "Almaty", "Astana"],
+    "Comp_FlyArystan_RU": ["Kazakhstan", "Almaty", "Astana"],
+    "Comp_VietnamAirlines_VI": ["Vietnam", "HCM", "HaNoi"],
+    "Comp_Turkish_EN": ["Kazakhstan", "Czechia"],
+    "Comp_Czech_CZ": ["Czechia", "Prague"],
 }
 
-# --- NOISE FILTER ---
-# Chạy lần đầu với list rỗng, check output, thêm pattern nếu cần, chạy lại
-EXCLUDE_PATTERNS = [
-    # r'việc làm',
-    # r'tuyển dụng',
-]
+EXCLUDE_PATTERNS = []
 
 # ╔═══════════════════════════════════════════════════════════╗
 # ║  VALIDATION                                               ║
@@ -223,11 +346,3 @@ def main():
     print(f"\n{'='*60}\nDone! Import {output_file} vào Google Sheets → feed Duy's Agent")
 
 if __name__ == "__main__": main()
-
-# ╔═══════════════════════════════════════════════════════════╗
-# ║  PHỤ LỤC — GEO IDs & LANGUAGE IDs PHỔ BIẾN              ║
-# ╚═══════════════════════════════════════════════════════════╝
-# COUNTRIES: Vietnam=2704, Thailand=2764, Singapore=2702, Malaysia=2458, Indonesia=2360, Philippines=2608, Germany=2276, US=2840, UK=2826, Japan=2392, Korea=2410
-# VN PROVINCES: HCM=9040373, Hà Nội=9040331, Đà Nẵng=9047170, Bình Dương=9047166, Đồng Nai=9040372, Bà Rịa VT=9040374, Long An=9047181, Bình Phước=9047167, Cần Thơ=9040377, Vĩnh Long=9047188, Khánh Hòa=9040364, Huế=9040349, Quảng Nam=9040351, Hải Phòng=9040353
-# LANGUAGES: Vietnamese=1040, English=1000, Japanese=1015, Korean=1012, Chinese=1017, Thai=1044
-# Tìm ID khác: dùng search_geo_targets trong Claude hoặc https://developers.google.com/google-ads/api/reference/data/geotargets

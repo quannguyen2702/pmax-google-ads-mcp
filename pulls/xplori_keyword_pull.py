@@ -1,20 +1,8 @@
 #!/usr/bin/env python3
 """
-Keyword Puller — Generic Template
-Pull keywords từ Google Keyword Planner API, output CSV cho Duy's Keyword Analysis Agent.
-
-Usage:
-    1. Sửa CONFIG section bên dưới cho client của bạn
-    2. Chạy:
-       macOS/Linux: .venv/bin/python keyword_pull.py
-       Windows:     .venv\Scripts\python keyword_pull.py
-    3. Import output CSV vào Google Sheets → feed Duy's Agent
-
-Số keyword output phụ thuộc vào CONFIG:
-- Mỗi seed group trả max 100 keywords
-- Tổng raw = số seed groups × số geo levels × số time ranges × 100
-- Sau dedup/filter: thường còn 40-60% raw
-- Muốn ít hơn → bớt seed groups. Muốn nhiều hơn → thêm seed groups.
+Keyword Puller — Xplori (Travel SIM/eSIM)
+Purpose: Proposal — kéo hết, càng nhiều insight càng tốt
+Auto-generated. DO NOT edit code section.
 """
 
 import os, json, re, csv, time
@@ -26,70 +14,240 @@ import requests
 load_dotenv()
 
 # ╔═══════════════════════════════════════════════════════════╗
-# ║  CONFIG — SỬA TOÀN BỘ PHẦN NÀY CHO CLIENT CỦA BẠN      ║
-# ║                                                           ║
-# ║  Xóa hết comment ví dụ, thay bằng data client bạn.       ║
+# ║  CONFIG — XPLORI                                          ║
 # ╚═══════════════════════════════════════════════════════════╝
 
-# --- CLIENT INFO ---
-CLIENT_NAME = ""                       # Ví dụ: "Vinuni", "MasteriseHomes", "FECredit"
-CUSTOMER_ID = ""                       # Google Ads customer ID, 10 chữ số, không dashes
-OUTPUT_FILE = ""                       # Để trống = auto: clientname_keywords_full.csv
+CLIENT_NAME = "Xplori"
+CUSTOMER_ID = "8409563791"
+OUTPUT_FILE = ""
 
-# --- GEO TARGETS ---
-# Key = label hiển thị, Value = list criterion IDs
-# Tìm ID: dùng search_geo_targets trong Claude, hoặc xem bảng cuối file
 GEO = {
-    # "Vietnam": ["2704"],
-    # "HCM+BD": ["9040373", "9047166"],
+    "Vietnam": ["2704"],
+    "Singapore": ["2702"],
+    "Philippines": ["2608"],
 }
 
-# --- TIME RANGES ---
-# (label, start_year, start_month, end_year, end_month)
 RANGES = [
     ("2024", 2024, 1, 2024, 12),
     ("2025", 2025, 1, 2025, 12),
 ]
 
-# --- SEEDS ---
-# Mỗi angle: "lang" + list "seeds" (pipe-separated, max 10 kw/group, max 100 results/group)
-# Angle names tùy bạn đặt: Brand, Programs, Generic, Competitor, EN, Product, Feature...
-#
-# EDUCATION example:
-#   "Brand": {"lang":"1040", "seeds":["tên trường|viết tắt|tên tiếng anh"]}
-#   "Programs": {"lang":"1040", "seeds":["ngành QTKD|ngành KHMT|ngành kiến trúc"]}
-#
-# REAL ESTATE example:
-#   "Brand": {"lang":"1040", "seeds":["masterise homes|the global city"]}
-#   "Product": {"lang":"1040", "seeds":["căn hộ quận 2|penthouse thảo điền"]}
-#
-# FINANCE example:
-#   "Brand": {"lang":"1040", "seeds":["fe credit|vay fe credit"]}
-#   "Product": {"lang":"1040", "seeds":["vay tiền online|vay tiêu dùng|vay trả góp"]}
 SEED_GROUPS = {
-    # "Brand": {
-    #     "lang": "1040",
-    #     "seeds": [
-    #         "keyword1|keyword2|keyword3",
-    #     ]
-    # },
+    # === BRAND ===
+    "Brand": {
+        "lang": "1000",
+        "seeds": [
+            "xplori|xplori sim|xplori esim|xplori app|xplori travel sim|xplori data|xplori review",
+        ]
+    },
+    "Brand_VI": {
+        "lang": "1040",
+        "seeds": [
+            "xplori|xplori sim du lịch|xplori esim|mua sim xplori|xplori giá rẻ",
+        ]
+    },
+    # === PRODUCT — Vietnamese ===
+    "Product_SIM_VI": {
+        "lang": "1040",
+        "seeds": [
+            "sim du lịch|sim du lịch quốc tế|sim du lịch nước ngoài|mua sim du lịch|sim data du lịch|sim du lịch giá rẻ",
+            "sim 4g du lịch|sim du lịch không giới hạn|sim du lịch online|đặt sim du lịch",
+        ]
+    },
+    "Product_eSIM_VI": {
+        "lang": "1040",
+        "seeds": [
+            "esim du lịch|esim quốc tế|esim là gì|cách cài esim|esim du lịch giá rẻ|mua esim du lịch",
+            "esim du lịch nước ngoài|esim data du lịch|esim không giới hạn|cài đặt esim du lịch",
+        ]
+    },
+    "Product_Roaming_VI": {
+        "lang": "1040",
+        "seeds": [
+            "gói roaming quốc tế|roaming du lịch|cước roaming|tắt roaming|bật roaming|phí roaming",
+            "gói roaming viettel|roaming mobifone|roaming vinaphone|gói cước quốc tế viettel",
+        ]
+    },
+    "Generic_Travel_VI": {
+        "lang": "1040",
+        "seeds": [
+            "wifi du lịch|wifi bỏ túi du lịch|thuê wifi du lịch|internet du lịch nước ngoài",
+            "mua sim ở sân bay|sim sân bay|đổi sim du lịch|wifi pocket du lịch",
+        ]
+    },
+
+    # === PRODUCT — English ===
+    "Product_SIM_EN": {
+        "lang": "1000",
+        "seeds": [
+            "travel sim card|international sim card|prepaid travel sim|travel data sim|buy sim card online",
+            "tourist sim card|travel sim card unlimited data|best travel sim card|cheap travel sim",
+        ]
+    },
+    "Product_eSIM_EN": {
+        "lang": "1000",
+        "seeds": [
+            "esim travel|esim international|buy esim online|esim data plan travel|best esim for travel",
+            "esim prepaid|esim unlimited data travel|esim plans international|how to use esim travel",
+        ]
+    },
+    "Generic_Travel_EN": {
+        "lang": "1000",
+        "seeds": [
+            "pocket wifi travel|international roaming plan|data roaming abroad|wifi rental travel",
+            "stay connected abroad|internet while traveling|mobile data overseas|travel connectivity",
+        ]
+    },
+
+    # === DESTINATION — Vietnamese (top travel destinations from VN) ===
+    "Dest_Asia_VI": {
+        "lang": "1040",
+        "seeds": [
+            "sim du lịch thái lan|sim du lịch hàn quốc|sim du lịch nhật bản|sim du lịch đài loan|sim du lịch trung quốc",
+            "esim thái lan|esim hàn quốc|esim nhật bản|esim đài loan|esim trung quốc|esim hong kong",
+            "sim du lịch singapore|sim du lịch malaysia|sim du lịch indonesia|sim du lịch bali",
+            "esim singapore|esim malaysia|esim indonesia|esim philippines|esim campuchia",
+        ]
+    },
+    "Dest_EU_US_VI": {
+        "lang": "1040",
+        "seeds": [
+            "sim du lịch châu âu|sim du lịch mỹ|sim du lịch úc|sim du lịch anh|sim du lịch pháp",
+            "esim châu âu|esim mỹ|esim úc|esim canada|esim du lịch châu âu giá rẻ",
+            "sim du lịch dubai|sim du lịch thổ nhĩ kỳ|sim du lịch ấn độ",
+        ]
+    },
+
+    # === DESTINATION — English (searched from SG & PH) ===
+    "Dest_Asia_EN": {
+        "lang": "1000",
+        "seeds": [
+            "thailand sim card|japan sim card|korea sim card|taiwan sim card|china sim card",
+            "japan esim|korea esim|thailand esim|taiwan esim|hong kong esim|china esim",
+            "bali sim card|vietnam sim card|cambodia sim card|malaysia sim card|indonesia sim card",
+        ]
+    },
+    "Dest_EU_EN": {
+        "lang": "1000",
+        "seeds": [
+            "europe sim card|france sim card|italy sim card|spain sim card|uk sim card|germany sim card",
+            "europe esim|uk esim|france esim|italy esim|spain esim|switzerland esim",
+        ]
+    },
+    "Dest_US_ME_EN": {
+        "lang": "1000",
+        "seeds": [
+            "usa sim card|us esim|canada sim card|australia sim card|new zealand sim card",
+            "dubai sim card|turkey sim card|turkey esim|dubai esim|qatar sim card|india esim",
+        ]
+    },
+
+    # === COMPETITORS — from brief ===
+    "Competitor_Gigago": {
+        "lang": "1040",
+        "seeds": [
+            "gigago|gigago sim|gigago esim|mua sim gigago|gigago review|sim du lịch gigago|gigago giá",
+        ]
+    },
+    "Competitor_Gohub": {
+        "lang": "1040",
+        "seeds": [
+            "gohub|gohub sim|gohub esim|mua sim gohub|sim du lịch gohub|gohub review|gohub giá",
+        ]
+    },
+    "Competitor_GoFlex": {
+        "lang": "1040",
+        "seeds": [
+            "goflex|goflex sim|goflex esim|sim du lịch goflex|goflex review|mua sim goflex",
+        ]
+    },
+    "Competitor_Airalo": {
+        "lang": "1000",
+        "seeds": [
+            "airalo|airalo esim|airalo review|airalo app|airalo promo code|airalo vs holafly|buy airalo esim",
+        ]
+    },
+    "Competitor_Holafly": {
+        "lang": "1000",
+        "seeds": [
+            "holafly|holafly esim|holafly review|holafly app|holafly promo code|holafly vs airalo",
+        ]
+    },
+    "Competitor_VN_Local": {
+        "lang": "1040",
+        "seeds": [
+            "kohab|kohab sim|kohab esim|simstation|simstation sim|sim du lịch kohab|sim du lịch simstation",
+        ]
+    },
+
+    # === PLATFORM & CHANNEL ===
+    "Platform_VI": {
+        "lang": "1040",
+        "seeds": [
+            "mua sim traveloka|sim du lịch shopee|esim klook|sim du lịch lazada|esim traveloka",
+            "mua esim shopee|sim du lịch trên traveloka|đặt sim du lịch online|sim du lịch kkday",
+        ]
+    },
+    "Platform_EN": {
+        "lang": "1000",
+        "seeds": [
+            "traveloka esim|klook sim card|shopee sim card travel|kkday sim card|agoda esim",
+        ]
+    },
+
+    # === COMPARISON & REVIEW ===
+    "Comparison_VI": {
+        "lang": "1040",
+        "seeds": [
+            "sim du lịch nào tốt|so sánh sim du lịch|review sim du lịch|sim du lịch tốt nhất 2025",
+            "esim hay sim vật lý|nên mua sim du lịch ở đâu|sim du lịch hay wifi|top sim du lịch",
+        ]
+    },
+    "Comparison_EN": {
+        "lang": "1000",
+        "seeds": [
+            "best esim for travel 2025|esim vs physical sim|best travel sim card review|esim comparison",
+            "airalo vs holafly vs gigago|best esim app|cheapest esim|travel sim vs pocket wifi",
+        ]
+    },
 }
 
-# --- GEO PULL STRATEGY ---
-# "all" = pull tất cả geo levels | ["Vietnam"] = chỉ country | ["Vietnam","HCM"] = 2 levels
-# Angle không có trong dict → mặc định chỉ pull geo level đầu tiên
 GEO_STRATEGY = {
-    # "Brand": "all",
-    # "Generic": ["Vietnam", "HCM"],
-    # "Competitor": ["Vietnam"],
+    # Brand — all markets
+    "Brand": ["Vietnam", "Singapore", "Philippines"],
+    "Brand_VI": ["Vietnam"],
+    # Product Vietnamese — Vietnam only
+    "Product_SIM_VI": ["Vietnam"],
+    "Product_eSIM_VI": ["Vietnam"],
+    "Product_Roaming_VI": ["Vietnam"],
+    "Generic_Travel_VI": ["Vietnam"],
+    # Product English — all markets
+    "Product_SIM_EN": ["Vietnam", "Singapore", "Philippines"],
+    "Product_eSIM_EN": ["Vietnam", "Singapore", "Philippines"],
+    "Generic_Travel_EN": ["Vietnam", "Singapore", "Philippines"],
+    # Destination Vietnamese — Vietnam only
+    "Dest_Asia_VI": ["Vietnam"],
+    "Dest_EU_US_VI": ["Vietnam"],
+    # Destination English — SG + PH (+ VN for English searchers)
+    "Dest_Asia_EN": ["Vietnam", "Singapore", "Philippines"],
+    "Dest_EU_EN": ["Vietnam", "Singapore", "Philippines"],
+    "Dest_US_ME_EN": ["Vietnam", "Singapore", "Philippines"],
+    # Competitors VN — Vietnam only
+    "Competitor_Gigago": ["Vietnam"],
+    "Competitor_Gohub": ["Vietnam"],
+    "Competitor_GoFlex": ["Vietnam"],
+    "Competitor_VN_Local": ["Vietnam"],
+    # Competitors Global — all markets
+    "Competitor_Airalo": ["Vietnam", "Singapore", "Philippines"],
+    "Competitor_Holafly": ["Vietnam", "Singapore", "Philippines"],
+    # Platform & Comparison
+    "Platform_VI": ["Vietnam"],
+    "Platform_EN": ["Singapore", "Philippines"],
+    "Comparison_VI": ["Vietnam"],
+    "Comparison_EN": ["Vietnam", "Singapore", "Philippines"],
 }
 
-# --- NOISE FILTER ---
-# Chạy lần đầu với list rỗng, check output, thêm pattern nếu cần, chạy lại
-EXCLUDE_PATTERNS = [
-    # r'việc làm',
-    # r'tuyển dụng',
-]
+EXCLUDE_PATTERNS = []
 
 # ╔═══════════════════════════════════════════════════════════╗
 # ║  VALIDATION                                               ║
@@ -223,11 +381,3 @@ def main():
     print(f"\n{'='*60}\nDone! Import {output_file} vào Google Sheets → feed Duy's Agent")
 
 if __name__ == "__main__": main()
-
-# ╔═══════════════════════════════════════════════════════════╗
-# ║  PHỤ LỤC — GEO IDs & LANGUAGE IDs PHỔ BIẾN              ║
-# ╚═══════════════════════════════════════════════════════════╝
-# COUNTRIES: Vietnam=2704, Thailand=2764, Singapore=2702, Malaysia=2458, Indonesia=2360, Philippines=2608, Germany=2276, US=2840, UK=2826, Japan=2392, Korea=2410
-# VN PROVINCES: HCM=9040373, Hà Nội=9040331, Đà Nẵng=9047170, Bình Dương=9047166, Đồng Nai=9040372, Bà Rịa VT=9040374, Long An=9047181, Bình Phước=9047167, Cần Thơ=9040377, Vĩnh Long=9047188, Khánh Hòa=9040364, Huế=9040349, Quảng Nam=9040351, Hải Phòng=9040353
-# LANGUAGES: Vietnamese=1040, English=1000, Japanese=1015, Korean=1012, Chinese=1017, Thai=1044
-# Tìm ID khác: dùng search_geo_targets trong Claude hoặc https://developers.google.com/google-ads/api/reference/data/geotargets

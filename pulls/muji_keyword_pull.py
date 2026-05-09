@@ -1,21 +1,5 @@
 #!/usr/bin/env python3
-"""
-Keyword Puller — Generic Template
-Pull keywords từ Google Keyword Planner API, output CSV cho Duy's Keyword Analysis Agent.
-
-Usage:
-    1. Sửa CONFIG section bên dưới cho client của bạn
-    2. Chạy:
-       macOS/Linux: .venv/bin/python keyword_pull.py
-       Windows:     .venv\Scripts\python keyword_pull.py
-    3. Import output CSV vào Google Sheets → feed Duy's Agent
-
-Số keyword output phụ thuộc vào CONFIG:
-- Mỗi seed group trả max 100 keywords
-- Tổng raw = số seed groups × số geo levels × số time ranges × 100
-- Sau dedup/filter: thường còn 40-60% raw
-- Muốn ít hơn → bớt seed groups. Muốn nhiều hơn → thêm seed groups.
-"""
+"""Keyword Puller — Muji (Fashion / LINEN focus)"""
 
 import os, json, re, csv, time
 from dotenv import load_dotenv
@@ -25,71 +9,113 @@ import requests
 
 load_dotenv()
 
-# ╔═══════════════════════════════════════════════════════════╗
-# ║  CONFIG — SỬA TOÀN BỘ PHẦN NÀY CHO CLIENT CỦA BẠN      ║
-# ║                                                           ║
-# ║  Xóa hết comment ví dụ, thay bằng data client bạn.       ║
-# ╚═══════════════════════════════════════════════════════════╝
+CLIENT_NAME = "Muji"
+CUSTOMER_ID = "8409563791"
+OUTPUT_FILE = ""
 
-# --- CLIENT INFO ---
-CLIENT_NAME = ""                       # Ví dụ: "Vinuni", "MasteriseHomes", "FECredit"
-CUSTOMER_ID = ""                       # Google Ads customer ID, 10 chữ số, không dashes
-OUTPUT_FILE = ""                       # Để trống = auto: clientname_keywords_full.csv
-
-# --- GEO TARGETS ---
-# Key = label hiển thị, Value = list criterion IDs
-# Tìm ID: dùng search_geo_targets trong Claude, hoặc xem bảng cuối file
 GEO = {
-    # "Vietnam": ["2704"],
-    # "HCM+BD": ["9040373", "9047166"],
+    "Vietnam": ["2704"],
 }
 
-# --- TIME RANGES ---
-# (label, start_year, start_month, end_year, end_month)
 RANGES = [
-    ("2024", 2024, 1, 2024, 12),
     ("2025", 2025, 1, 2025, 12),
+    ("2026-Q1Q2", 2026, 1, 2026, 4),
 ]
 
-# --- SEEDS ---
-# Mỗi angle: "lang" + list "seeds" (pipe-separated, max 10 kw/group, max 100 results/group)
-# Angle names tùy bạn đặt: Brand, Programs, Generic, Competitor, EN, Product, Feature...
-#
-# EDUCATION example:
-#   "Brand": {"lang":"1040", "seeds":["tên trường|viết tắt|tên tiếng anh"]}
-#   "Programs": {"lang":"1040", "seeds":["ngành QTKD|ngành KHMT|ngành kiến trúc"]}
-#
-# REAL ESTATE example:
-#   "Brand": {"lang":"1040", "seeds":["masterise homes|the global city"]}
-#   "Product": {"lang":"1040", "seeds":["căn hộ quận 2|penthouse thảo điền"]}
-#
-# FINANCE example:
-#   "Brand": {"lang":"1040", "seeds":["fe credit|vay fe credit"]}
-#   "Product": {"lang":"1040", "seeds":["vay tiền online|vay tiêu dùng|vay trả góp"]}
 SEED_GROUPS = {
-    # "Brand": {
-    #     "lang": "1040",
-    #     "seeds": [
-    #         "keyword1|keyword2|keyword3",
-    #     ]
-    # },
+    "Brand_Linen": {
+        "lang": "1040",
+        "seeds": [
+            "muji linen|muji vải lanh|muji linen collection|áo linen muji|quần linen muji|váy linen muji",
+            "muji|muji việt nam|muji thời trang|muji quần áo|cửa hàng muji|muji online",
+        ]
+    },
+    "Product_Linen_VI": {
+        "lang": "1040",
+        "seeds": [
+            "quần áo linen|thời trang linen|đồ linen|trang phục linen|bộ sưu tập linen|outfit linen",
+            "áo linen|áo sơ mi linen|áo linen nữ|áo linen nam|áo kiểu linen|áo linen oversize",
+            "quần linen|quần linen nữ|quần linen nam|quần ống rộng linen|quần dài linen",
+            "váy linen|đầm linen|váy linen nữ|chân váy linen|đầm suông linen",
+            "áo khoác linen|blazer linen|jacket linen|áo vest linen",
+        ]
+    },
+    "Material_Linen_VI": {
+        "lang": "1040",
+        "seeds": [
+            "vải lanh|vải linen|vải lanh là gì|vải linen là gì|chất liệu linen|vải lanh tự nhiên",
+            "vải lanh mặc mát|vải linen mùa hè|vải lanh cao cấp|vải linen organic|vải lanh nhăn",
+            "mua vải linen|vải linen giá rẻ|vải linen mét|vải lanh khổ rộng",
+        ]
+    },
+    "Generic_Fashion_Linen_VI": {
+        "lang": "1040",
+        "seeds": [
+            "thời trang mùa hè|quần áo mùa hè|đồ mặc mát|quần áo thoáng mát|chất liệu mát mùa hè",
+            "phong cách tối giản|minimalist fashion|quần áo basic|thời trang tối giản nhật bản",
+            "quần áo công sở linen|đồ đi biển linen|outfit mùa hè linen|mix đồ linen",
+        ]
+    },
+    "Product_Linen_EN": {
+        "lang": "1000",
+        "seeds": [
+            "linen clothing|linen shirt|linen pants|linen dress|linen outfit|linen collection",
+            "linen fashion|linen clothes women|linen clothes men|linen summer outfit",
+            "linen blouse|linen trousers|linen skirt|linen blazer|linen jacket",
+        ]
+    },
+    "Competitor_Uniqlo": {
+        "lang": "1040",
+        "seeds": [
+            "uniqlo linen|uniqlo vải lanh|áo linen uniqlo|quần linen uniqlo|uniqlo premium linen",
+            "uniqlo|uniqlo việt nam|uniqlo mùa hè|uniqlo quần áo|uniqlo online",
+        ]
+    },
+    "Competitor_Zara": {
+        "lang": "1040",
+        "seeds": [
+            "zara linen|áo linen zara|quần linen zara|váy linen zara|zara vải lanh",
+            "zara|zara việt nam|zara mùa hè|zara quần áo|zara online",
+        ]
+    },
+    "Competitor_HM": {
+        "lang": "1040",
+        "seeds": [
+            "h&m linen|áo linen h&m|quần linen h&m|h&m vải lanh|h&m conscious linen",
+            "h&m|h&m việt nam|h&m quần áo|h&m mùa hè|h&m online",
+        ]
+    },
+    "Competitor_Others": {
+        "lang": "1040",
+        "seeds": [
+            "tim tay|tim tay thời trang|quần áo tim tay",
+            "cá trích màu xanh|cá trích màu xanh thời trang",
+            "soms|soms thời trang|soms quần áo|soms linen",
+        ]
+    },
+    "Comparison_VI": {
+        "lang": "1040",
+        "seeds": [
+            "quần áo linen mua ở đâu|shop bán đồ linen|mua áo linen ở đâu|thương hiệu linen tốt",
+            "muji hay uniqlo|so sánh muji uniqlo|áo linen hãng nào tốt|linen hàng hiệu",
+        ]
+    },
 }
 
-# --- GEO PULL STRATEGY ---
-# "all" = pull tất cả geo levels | ["Vietnam"] = chỉ country | ["Vietnam","HCM"] = 2 levels
-# Angle không có trong dict → mặc định chỉ pull geo level đầu tiên
 GEO_STRATEGY = {
-    # "Brand": "all",
-    # "Generic": ["Vietnam", "HCM"],
-    # "Competitor": ["Vietnam"],
+    "Brand_Linen": ["Vietnam"],
+    "Product_Linen_VI": ["Vietnam"],
+    "Material_Linen_VI": ["Vietnam"],
+    "Generic_Fashion_Linen_VI": ["Vietnam"],
+    "Product_Linen_EN": ["Vietnam"],
+    "Competitor_Uniqlo": ["Vietnam"],
+    "Competitor_Zara": ["Vietnam"],
+    "Competitor_HM": ["Vietnam"],
+    "Competitor_Others": ["Vietnam"],
+    "Comparison_VI": ["Vietnam"],
 }
 
-# --- NOISE FILTER ---
-# Chạy lần đầu với list rỗng, check output, thêm pattern nếu cần, chạy lại
-EXCLUDE_PATTERNS = [
-    # r'việc làm',
-    # r'tuyển dụng',
-]
+EXCLUDE_PATTERNS = []
 
 # ╔═══════════════════════════════════════════════════════════╗
 # ║  VALIDATION                                               ║
@@ -223,11 +249,3 @@ def main():
     print(f"\n{'='*60}\nDone! Import {output_file} vào Google Sheets → feed Duy's Agent")
 
 if __name__ == "__main__": main()
-
-# ╔═══════════════════════════════════════════════════════════╗
-# ║  PHỤ LỤC — GEO IDs & LANGUAGE IDs PHỔ BIẾN              ║
-# ╚═══════════════════════════════════════════════════════════╝
-# COUNTRIES: Vietnam=2704, Thailand=2764, Singapore=2702, Malaysia=2458, Indonesia=2360, Philippines=2608, Germany=2276, US=2840, UK=2826, Japan=2392, Korea=2410
-# VN PROVINCES: HCM=9040373, Hà Nội=9040331, Đà Nẵng=9047170, Bình Dương=9047166, Đồng Nai=9040372, Bà Rịa VT=9040374, Long An=9047181, Bình Phước=9047167, Cần Thơ=9040377, Vĩnh Long=9047188, Khánh Hòa=9040364, Huế=9040349, Quảng Nam=9040351, Hải Phòng=9040353
-# LANGUAGES: Vietnamese=1040, English=1000, Japanese=1015, Korean=1012, Chinese=1017, Thai=1044
-# Tìm ID khác: dùng search_geo_targets trong Claude hoặc https://developers.google.com/google-ads/api/reference/data/geotargets

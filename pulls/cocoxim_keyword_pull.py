@@ -1,21 +1,5 @@
 #!/usr/bin/env python3
-"""
-Keyword Puller — Generic Template
-Pull keywords từ Google Keyword Planner API, output CSV cho Duy's Keyword Analysis Agent.
-
-Usage:
-    1. Sửa CONFIG section bên dưới cho client của bạn
-    2. Chạy:
-       macOS/Linux: .venv/bin/python keyword_pull.py
-       Windows:     .venv\Scripts\python keyword_pull.py
-    3. Import output CSV vào Google Sheets → feed Duy's Agent
-
-Số keyword output phụ thuộc vào CONFIG:
-- Mỗi seed group trả max 100 keywords
-- Tổng raw = số seed groups × số geo levels × số time ranges × 100
-- Sau dedup/filter: thường còn 40-60% raw
-- Muốn ít hơn → bớt seed groups. Muốn nhiều hơn → thêm seed groups.
-"""
+"""Keyword Puller — Cocoxim (FMCG / Nước dừa)"""
 
 import os, json, re, csv, time
 from dotenv import load_dotenv
@@ -25,71 +9,107 @@ import requests
 
 load_dotenv()
 
-# ╔═══════════════════════════════════════════════════════════╗
-# ║  CONFIG — SỬA TOÀN BỘ PHẦN NÀY CHO CLIENT CỦA BẠN      ║
-# ║                                                           ║
-# ║  Xóa hết comment ví dụ, thay bằng data client bạn.       ║
-# ╚═══════════════════════════════════════════════════════════╝
+CLIENT_NAME = "Cocoxim"
+CUSTOMER_ID = "8409563791"
+OUTPUT_FILE = ""
 
-# --- CLIENT INFO ---
-CLIENT_NAME = ""                       # Ví dụ: "Vinuni", "MasteriseHomes", "FECredit"
-CUSTOMER_ID = ""                       # Google Ads customer ID, 10 chữ số, không dashes
-OUTPUT_FILE = ""                       # Để trống = auto: clientname_keywords_full.csv
-
-# --- GEO TARGETS ---
-# Key = label hiển thị, Value = list criterion IDs
-# Tìm ID: dùng search_geo_targets trong Claude, hoặc xem bảng cuối file
 GEO = {
-    # "Vietnam": ["2704"],
-    # "HCM+BD": ["9040373", "9047166"],
+    "Vietnam": ["2704"],
+    "HCM": ["9040373"],
+    "HaNoi": ["9040331"],
 }
 
-# --- TIME RANGES ---
-# (label, start_year, start_month, end_year, end_month)
 RANGES = [
-    ("2024", 2024, 1, 2024, 12),
     ("2025", 2025, 1, 2025, 12),
 ]
 
-# --- SEEDS ---
-# Mỗi angle: "lang" + list "seeds" (pipe-separated, max 10 kw/group, max 100 results/group)
-# Angle names tùy bạn đặt: Brand, Programs, Generic, Competitor, EN, Product, Feature...
-#
-# EDUCATION example:
-#   "Brand": {"lang":"1040", "seeds":["tên trường|viết tắt|tên tiếng anh"]}
-#   "Programs": {"lang":"1040", "seeds":["ngành QTKD|ngành KHMT|ngành kiến trúc"]}
-#
-# REAL ESTATE example:
-#   "Brand": {"lang":"1040", "seeds":["masterise homes|the global city"]}
-#   "Product": {"lang":"1040", "seeds":["căn hộ quận 2|penthouse thảo điền"]}
-#
-# FINANCE example:
-#   "Brand": {"lang":"1040", "seeds":["fe credit|vay fe credit"]}
-#   "Product": {"lang":"1040", "seeds":["vay tiền online|vay tiêu dùng|vay trả góp"]}
 SEED_GROUPS = {
-    # "Brand": {
-    #     "lang": "1040",
-    #     "seeds": [
-    #         "keyword1|keyword2|keyword3",
-    #     ]
-    # },
+    "Brand": {
+        "lang": "1040",
+        "seeds": [
+            "cocoxim|nước dừa cocoxim|cocoxim nước dừa|cocoxim organic|cocoxim đóng hộp|mua cocoxim",
+            "cocoxim giá|cocoxim shopee|cocoxim thùng|cocoxim bán ở đâu|cocoxim lazada",
+        ]
+    },
+    "Product_NuocDua": {
+        "lang": "1040",
+        "seeds": [
+            "nước dừa đóng hộp|nước dừa đóng chai|nước dừa tươi đóng hộp|nước dừa organic|nước dừa nguyên chất",
+            "nước dừa uống liền|nước dừa lon|nước dừa hộp giấy|nước dừa thùng|nước dừa lốc",
+            "nước dừa xiêm|nước dừa bến tre|nước dừa tươi|nước dừa dứa|nước dừa sáp",
+        ]
+    },
+    "Generic_NuocDua": {
+        "lang": "1040",
+        "seeds": [
+            "nước dừa|uống nước dừa|nước dừa có tốt không|nước dừa tốt cho sức khỏe|tác dụng nước dừa",
+            "nước dừa giảm cân|nước dừa đẹp da|nước dừa bà bầu|nước dừa có bao nhiêu calo|nước dừa keto",
+            "nước dừa mua ở đâu|mua nước dừa online|giá nước dừa|nước dừa giá sỉ|nước dừa thùng giá",
+        ]
+    },
+    "Generic_DoUong": {
+        "lang": "1040",
+        "seeds": [
+            "nước giải khát|đồ uống healthy|nước uống tốt cho sức khỏe|nước trái cây đóng hộp|nước ép đóng chai",
+            "đồ uống ít calo|nước uống giảm cân|nước uống mùa hè|đồ uống organic|thức uống tự nhiên",
+        ]
+    },
+    "Product_EN": {
+        "lang": "1000",
+        "seeds": [
+            "coconut water|coconut water brand vietnam|best coconut water|organic coconut water|packaged coconut water",
+            "coconut water benefits|coconut water calories|coconut water healthy|coconut water diet",
+        ]
+    },
+    "Competitor_Vietcoco": {
+        "lang": "1040",
+        "seeds": [
+            "vietcoco|nước dừa vietcoco|vietcoco nước dừa|vietcoco giá|vietcoco organic|mua vietcoco",
+        ]
+    },
+    "Competitor_DuaBenTre": {
+        "lang": "1040",
+        "seeds": [
+            "dừa bến tre|nước dừa bến tre đóng hộp|thương hiệu dừa bến tre|betrimex|betrimex nước dừa",
+        ]
+    },
+    "Competitor_Others": {
+        "lang": "1040",
+        "seeds": [
+            "wonderfarm nước dừa|vinamilk nước dừa|TH true milk nước dừa|nước dừa UFC",
+            "vita coco|vita coco vietnam|harmless harvest|harmless harvest nước dừa|zico nước dừa",
+        ]
+    },
+    "Comparison": {
+        "lang": "1040",
+        "seeds": [
+            "nước dừa hãng nào ngon|so sánh nước dừa đóng hộp|nước dừa nào tốt nhất|review nước dừa đóng hộp",
+            "nước dừa cocoxim hay vietcoco|top nước dừa đóng hộp|nước dừa đóng hộp nào ngon nhất",
+        ]
+    },
+    "Seasonal_Occasion": {
+        "lang": "1040",
+        "seeds": [
+            "nước dừa tết|nước dừa giỗ|nước dừa cúng|nước dừa tiệc|nước dừa liên hoan|nước dừa đám cưới",
+            "nước dừa mùa hè|nước dừa giải nhiệt|nước dừa sau tập gym|nước dừa thể thao",
+        ]
+    },
 }
 
-# --- GEO PULL STRATEGY ---
-# "all" = pull tất cả geo levels | ["Vietnam"] = chỉ country | ["Vietnam","HCM"] = 2 levels
-# Angle không có trong dict → mặc định chỉ pull geo level đầu tiên
 GEO_STRATEGY = {
-    # "Brand": "all",
-    # "Generic": ["Vietnam", "HCM"],
-    # "Competitor": ["Vietnam"],
+    "Brand": "all",
+    "Product_NuocDua": "all",
+    "Generic_NuocDua": "all",
+    "Generic_DoUong": "all",
+    "Product_EN": ["Vietnam"],
+    "Competitor_Vietcoco": "all",
+    "Competitor_DuaBenTre": "all",
+    "Competitor_Others": ["Vietnam"],
+    "Comparison": "all",
+    "Seasonal_Occasion": "all",
 }
 
-# --- NOISE FILTER ---
-# Chạy lần đầu với list rỗng, check output, thêm pattern nếu cần, chạy lại
-EXCLUDE_PATTERNS = [
-    # r'việc làm',
-    # r'tuyển dụng',
-]
+EXCLUDE_PATTERNS = []
 
 # ╔═══════════════════════════════════════════════════════════╗
 # ║  VALIDATION                                               ║
@@ -223,11 +243,3 @@ def main():
     print(f"\n{'='*60}\nDone! Import {output_file} vào Google Sheets → feed Duy's Agent")
 
 if __name__ == "__main__": main()
-
-# ╔═══════════════════════════════════════════════════════════╗
-# ║  PHỤ LỤC — GEO IDs & LANGUAGE IDs PHỔ BIẾN              ║
-# ╚═══════════════════════════════════════════════════════════╝
-# COUNTRIES: Vietnam=2704, Thailand=2764, Singapore=2702, Malaysia=2458, Indonesia=2360, Philippines=2608, Germany=2276, US=2840, UK=2826, Japan=2392, Korea=2410
-# VN PROVINCES: HCM=9040373, Hà Nội=9040331, Đà Nẵng=9047170, Bình Dương=9047166, Đồng Nai=9040372, Bà Rịa VT=9040374, Long An=9047181, Bình Phước=9047167, Cần Thơ=9040377, Vĩnh Long=9047188, Khánh Hòa=9040364, Huế=9040349, Quảng Nam=9040351, Hải Phòng=9040353
-# LANGUAGES: Vietnamese=1040, English=1000, Japanese=1015, Korean=1012, Chinese=1017, Thai=1044
-# Tìm ID khác: dùng search_geo_targets trong Claude hoặc https://developers.google.com/google-ads/api/reference/data/geotargets

@@ -1,0 +1,82 @@
+﻿Keyword,Angle,Location,Language,Jan-2024,Feb-2024,Mar-2024,Apr-2024,May-2024,Jun-2024,Jul-2024,Aug-2024,Sep-2024,Oct-2024,Nov-2024,Dec-2024,Jan-2025,Feb-2025,Mar-2025,Apr-2025,May-2025,Jun-2025,Jul-2025,Aug-2025,Sep-2025,Oct-2025,Nov-2025,Dec-2025,Competition,Flag Reason
+lotte finance tổng đài,Brand,Vietnam,VI,170,140,170,170,170,140,140,110,70,140,110,110,50,40,50,50,50,40,40,30,50,70,90,50,LOW(3),Low Intent - Tổng đài/Hotline (khách cũ)
+lotte finance lừa đảo,Product,Vietnam,VI,1300,720,1300,1300,1600,1600,1600,1900,1600,1900,1900,1900,1600,1000,1300,1900,1900,1900,1900,1900,1600,1900,1000,1900,LOW(1),Negative - Lừa đảo/Scam
+lotte finance có hỗ trợ nợ xấu không,Product,Vietnam,VI,210,70,140,170,260,260,210,210,260,320,260,320,210,140,260,210,260,210,260,170,110,170,110,140,LOW(7),Negative - Nợ xấu
+ngân hàng lotte finance lừa đảo,Product,Vietnam,VI,50,30,40,70,70,90,90,110,90,110,70,110,50,50,70,70,70,70,90,70,70,110,140,170,LOW(0),Negative - Lừa đảo/Scam
+công ty tài chính lotte lừa đảo,Product,Vietnam,VI,50,30,50,20,50,10,10,10,10,10,10,20,10,10,10,10,20,20,20,20,10,10,10,10,LOW(0),Negative - Lừa đảo/Scam
+thanh toán khoản vay lotte,Product,Vietnam,VI,20,10,10,10,10,10,20,10,10,20,20,20,10,10,10,20,10,10,10,10,10,10,10,10,LOW(0),Low Intent - Thanh toán/Tất toán (khách cũ)
+ngân hàng lotte credit lừa đảo,Product,Vietnam,VI,10,10,10,10,10,10,10,20,20,30,30,10,10,0,10,10,10,10,0,10,10,10,0,10,UNSPECIFIED,Negative - Lừa đảo/Scam
+tổng đài lotte credit,Product,Vietnam,VI,10,10,10,10,10,10,10,0,10,10,10,10,10,10,10,10,10,0,10,10,10,10,10,0,UNSPECIFIED,Low Intent - Tổng đài/Hotline (khách cũ)
+nợ xấu lotte,Product,Vietnam,VI,0,0,10,10,10,0,10,10,10,10,10,10,10,10,0,10,0,10,10,10,10,10,10,0,LOW(0),Negative - Nợ xấu
+vay lotte finance lừa đảo,Product,Vietnam,VI,20,10,0,0,10,10,10,0,0,0,10,10,0,10,10,10,10,10,10,10,10,10,0,0,UNSPECIFIED,Negative - Lừa đảo/Scam
+lotte credit lừa đảo,Product,Vietnam,VI,10,10,10,10,10,0,10,10,10,0,0,0,10,0,10,10,0,0,0,0,0,0,0,10,UNSPECIFIED,Negative - Lừa đảo/Scam
+công ty tài chính lotte credit lừa đảo,Product,Vietnam,VI,10,0,0,0,0,0,10,10,0,0,0,0,0,0,10,10,0,0,0,10,0,0,0,0,UNSPECIFIED,Negative - Lừa đảo/Scam
+vay lotte credit lừa đảo,Product,Vietnam,VI,0,0,0,0,0,0,0,0,0,0,0,10,10,0,10,0,10,0,0,0,0,0,0,0,UNSPECIFIED,Negative - Lừa đảo/Scam
+hotline home credit,Competitor_HomeCredit,Vietnam,VI,720,480,590,480,590,590,590,720,590,720,590,720,480,480,590,590,720,590,720,590,720,720,720,720,LOW(20),Low Intent - Tổng đài/Hotline (khách cũ)
+ngân hàng home vay tiền theo bảo hiểm xã hội,Competitor_HomeCredit,Vietnam,VI,390,210,390,390,390,320,390,320,320,320,320,260,260,210,260,260,170,210,210,170,170,210,210,140,MEDIUM(50),Irrelevant - Sản phẩm khác
+home credit lừa đảo,Competitor_HomeCredit,Vietnam,VI,590,260,390,260,170,210,110,140,170,140,170,140,110,70,90,70,70,70,70,50,70,90,70,70,LOW(0),Negative - Lừa đảo/Scam
+tổng đài fe,Competitor_FECredit,Vietnam,VI,9900,6600,9900,8100,9900,9900,9900,8100,8100,9900,9900,9900,8100,8100,9900,9900,9900,9900,9900,9900,9900,12100,9900,9900,LOW(2),Low Intent - Tổng đài/Hotline (khách cũ)
+tổng đài fe credit,Competitor_FECredit,Vietnam,VI,8100,5400,8100,6600,6600,6600,6600,5400,5400,6600,5400,6600,4400,4400,6600,5400,6600,5400,5400,6600,6600,6600,6600,6600,LOW(3),Low Intent - Tổng đài/Hotline (khách cũ)
+tổng đài fecredit,Competitor_FECredit,Vietnam,VI,8100,5400,8100,6600,6600,6600,6600,5400,5400,6600,5400,6600,4400,4400,6600,5400,6600,5400,5400,6600,6600,6600,6600,6600,LOW(3),Low Intent - Tổng đài/Hotline (khách cũ)
+số tổng đài fe,Competitor_FECredit,Vietnam,VI,1900,1600,2400,1900,1600,1900,2400,1900,1900,2400,1900,1900,1900,1900,2400,1900,2400,2400,2400,2400,2400,2400,2400,2400,LOW(3),Low Intent - Tổng đài/Hotline (khách cũ)
+số tổng đài fe credit,Competitor_FECredit,Vietnam,VI,1600,720,1300,1600,1600,880,880,720,720,880,880,1000,720,590,720,720,720,590,1000,720,720,1300,1300,1300,LOW(4),Low Intent - Tổng đài/Hotline (khách cũ)
+số điện thoại fe,Competitor_FECredit,Vietnam,VI,1000,720,1000,880,1000,1000,1000,1000,880,720,720,720,720,590,720,720,720,590,720,720,720,720,880,720,LOW(3),Low Intent - Tổng đài/Hotline (khách cũ)
+hotline fe credit,Competitor_FECredit,Vietnam,VI,720,390,720,590,590,720,880,880,720,880,720,720,590,720,880,720,720,720,880,1000,1000,1000,880,880,LOW(6),Low Intent - Tổng đài/Hotline (khách cũ)
+số điện thoại tổng đài fe,Competitor_FECredit,Vietnam,VI,720,480,720,590,590,590,590,590,590,590,480,480,480,480,480,480,590,720,590,720,480,590,590,590,LOW(3),Low Intent - Tổng đài/Hotline (khách cũ)
+số điện thoại fe credit,Competitor_FECredit,Vietnam,VI,480,320,390,320,390,480,480,480,480,480,480,480,390,390,590,480,480,480,590,480,590,480,480,480,LOW(6),Low Intent - Tổng đài/Hotline (khách cũ)
+số điện thoại nhân viên fe credit,Competitor_FECredit,Vietnam,VI,480,320,880,880,480,390,390,390,320,480,320,480,320,320,590,480,320,480,260,210,260,260,210,210,LOW(4),Low Intent - Tổng đài/Hotline (khách cũ) | Irrelevant - Tuyển dụng
+fe credit tổng đài,Competitor_FECredit,Vietnam,VI,590,390,390,480,480,480,260,260,260,320,320,390,390,390,390,320,260,320,260,260,320,320,390,390,LOW(6),Low Intent - Tổng đài/Hotline (khách cũ)
+số tổng đài fe credit trả góp,Competitor_FECredit,Vietnam,VI,720,590,720,390,590,390,590,480,320,390,320,480,320,390,210,320,210,20,170,260,320,260,40,70,LOW(4),Low Intent - Tổng đài/Hotline (khách cũ)
+số tổng đài 1900234588,Competitor_FECredit,Vietnam,VI,480,170,210,210,480,390,390,390,390,390,390,390,320,390,480,320,260,260,260,260,390,320,90,50,LOW(1),Low Intent - Tổng đài/Hotline (khách cũ)
+số điện thoại nhân viên ngân hàng fe credit,Competitor_FECredit,Vietnam,VI,590,320,480,480,480,320,320,390,260,260,260,260,210,210,260,260,260,260,260,210,320,260,260,320,LOW(3),Low Intent - Tổng đài/Hotline (khách cũ) | Irrelevant - Tuyển dụng
+số điện thoại tổng đài fe credit,Competitor_FECredit,Vietnam,VI,480,210,320,390,390,260,260,320,260,260,320,390,260,260,260,260,260,320,320,320,320,260,260,260,LOW(4),Low Intent - Tổng đài/Hotline (khách cũ)
+tổng đài fe credit vay tiền,Competitor_FECredit,Vietnam,VI,90,140,480,590,480,590,480,480,320,320,390,390,320,320,210,170,210,140,260,170,320,110,50,50,LOW(17),Low Intent - Tổng đài/Hotline (khách cũ)
+chăm sóc khách hàng fe credit,Competitor_FECredit,Vietnam,VI,480,260,320,320,320,320,260,260,320,320,260,320,210,210,210,210,210,210,260,170,260,320,210,210,LOW(4),Low Intent - Tổng đài/Hotline (khách cũ)
+số điện thoại ngân hàng fe,Competitor_FECredit,Vietnam,VI,590,260,260,320,390,260,320,260,260,260,210,260,170,170,170,170,260,210,210,260,210,210,170,170,LOW(25),Low Intent - Tổng đài/Hotline (khách cũ)
+tổng đài ngân hàng fe,Competitor_FECredit,Vietnam,VI,140,110,140,140,90,110,110,110,90,90,110,110,90,90,140,110,110,140,140,140,110,140,170,170,LOW(20),Low Intent - Tổng đài/Hotline (khách cũ)
+số tổng đài của fe,Competitor_FECredit,Vietnam,VI,170,90,170,110,140,140,110,90,70,110,110,90,110,70,90,70,90,90,110,140,110,90,110,140,LOW(3),Low Intent - Tổng đài/Hotline (khách cũ)
+số tổng đài fe 1900,Competitor_FECredit,Vietnam,VI,210,110,140,110,140,90,110,90,140,110,90,90,90,90,70,70,70,90,70,50,90,110,90,70,LOW(2),Low Intent - Tổng đài/Hotline (khách cũ)
+tổng đài chăm sóc khách hàng fe credit,Competitor_FECredit,Vietnam,VI,140,70,110,90,90,70,140,70,70,90,70,90,50,50,70,70,70,90,70,70,90,90,50,90,LOW(4),Low Intent - Tổng đài/Hotline (khách cũ)
+số tổng đài ngân hàng fe,Competitor_FECredit,Vietnam,VI,140,70,90,90,70,70,90,70,90,90,70,90,70,50,90,70,50,90,90,70,70,70,70,90,LOW(22),Low Intent - Tổng đài/Hotline (khách cũ)
+tổng đài ngân hàng fe credit,Competitor_FECredit,Vietnam,VI,140,110,170,110,140,90,140,110,90,110,110,110,90,50,40,50,40,20,30,10,20,20,10,50,LOW(4),Low Intent - Tổng đài/Hotline (khách cũ)
+tổng đài fe credit trả góp,Competitor_FECredit,Vietnam,VI,90,30,40,40,70,30,70,70,50,40,20,10,210,210,170,70,110,10,20,20,20,110,170,170,LOW(5),Low Intent - Tổng đài/Hotline (khách cũ)
+số điện thoại của fe credit,Competitor_FECredit,Vietnam,VI,70,40,90,70,90,90,50,50,70,70,70,50,40,50,70,50,70,70,110,70,70,40,50,70,LOW(10),Low Intent - Tổng đài/Hotline (khách cũ)
+số điện thoại tổng đài fe credit trả góp,Competitor_FECredit,Vietnam,VI,140,110,170,90,70,110,90,50,50,70,50,20,20,20,50,20,20,10,70,20,50,20,20,20,LOW(10),Low Intent - Tổng đài/Hotline (khách cũ)
+số điện thoại fe credit vay tiền mặt,Competitor_FECredit,Vietnam,VI,140,50,70,110,90,50,70,30,30,30,30,20,30,20,30,30,30,20,30,30,40,30,20,20,MEDIUM(34),Low Intent - Tổng đài/Hotline (khách cũ)
+số điện thoại ngân hàng fe credit,Competitor_FECredit,Vietnam,VI,40,20,40,40,40,40,70,30,40,40,30,50,20,30,40,20,40,70,50,30,40,40,30,40,LOW(10),Low Intent - Tổng đài/Hotline (khách cũ)
+số điện thoại tổng đài fe home credit,Competitor_FECredit,Vietnam,VI,10,10,10,20,20,10,20,20,20,10,10,40,30,30,20,30,30,30,10,40,30,30,40,30,LOW(21),Low Intent - Tổng đài/Hotline (khách cũ)
+cake,Competitor_Cake,Vietnam,VI,27100,22200,33100,33100,33100,33100,40500,33100,40500,40500,40500,49500,40500,33100,40500,33100,33100,33100,33100,33100,33100,40500,40500,40500,LOW(7),Irrelevant - Quá chung chung
+cake by vpbank lừa đảo,Competitor_Cake,Vietnam,VI,590,880,590,880,1000,1000,1000,1000,720,880,720,720,720,880,880,720,720,590,720,880,880,880,1300,1900,LOW(0),Negative - Lừa đảo/Scam
+tổng đài hd saison,Competitor_HDSaison,Vietnam,VI,5400,3600,5400,4400,5400,4400,4400,4400,4400,4400,4400,5400,4400,4400,5400,4400,4400,4400,4400,4400,4400,5400,5400,5400,LOW(6),Low Intent - Tổng đài/Hotline (khách cũ)
+số tổng đài hd saison,Competitor_HDSaison,Vietnam,VI,1000,590,880,880,880,720,720,720,590,880,880,880,720,590,1000,720,880,880,880,720,880,1000,1000,1300,LOW(12),Low Intent - Tổng đài/Hotline (khách cũ)
+hotline hd saison,Competitor_HDSaison,Vietnam,VI,590,320,480,390,390,480,390,480,390,390,480,480,390,390,390,390,390,390,390,390,390,480,480,480,LOW(1),Low Intent - Tổng đài/Hotline (khách cũ)
+hd saison tổng đài,Competitor_HDSaison,Vietnam,VI,390,390,390,260,260,260,320,260,170,260,260,260,260,260,390,260,320,320,260,260,210,320,260,320,LOW(2),Low Intent - Tổng đài/Hotline (khách cũ)
+số điện thoại hd saison,Competitor_HDSaison,Vietnam,VI,320,170,320,260,260,260,260,210,170,210,210,260,210,210,210,170,210,170,170,210,210,260,170,210,LOW(8),Low Intent - Tổng đài/Hotline (khách cũ)
+số điện thoại nhân viên hd saison,Competitor_HDSaison,Vietnam,VI,320,110,210,210,210,260,320,170,140,170,260,260,260,140,210,170,110,140,170,170,110,110,110,90,LOW(1),Low Intent - Tổng đài/Hotline (khách cũ) | Irrelevant - Tuyển dụng
+số điện thoại ngân hàng hd saison,Competitor_HDSaison,Vietnam,VI,320,170,260,210,170,210,170,110,110,170,170,210,170,110,140,140,140,170,170,210,210,260,210,210,LOW(16),Low Intent - Tổng đài/Hotline (khách cũ)
+chăm sóc khách hàng hd saison,Competitor_HDSaison,Vietnam,VI,210,140,210,110,110,140,170,170,140,170,140,170,210,140,170,140,140,140,140,140,170,170,170,210,LOW(1),Low Intent - Tổng đài/Hotline (khách cũ)
+số điện thoại tổng đài hd saison,Competitor_HDSaison,Vietnam,VI,210,140,170,140,210,210,210,110,140,110,140,140,140,140,140,110,110,110,140,110,140,140,210,210,LOW(14),Low Intent - Tổng đài/Hotline (khách cũ)
+tổng đài ngân hàng hd saison,Competitor_HDSaison,Vietnam,VI,90,90,110,170,140,140,170,110,140,140,110,110,90,110,140,110,140,110,140,110,110,110,110,110,LOW(19),Low Intent - Tổng đài/Hotline (khách cũ)
+tổng đài chăm sóc khách hàng hd saison,Competitor_HDSaison,Vietnam,VI,210,140,170,170,140,140,110,90,70,50,50,70,50,70,50,40,70,50,50,50,70,50,40,50,LOW(9),Low Intent - Tổng đài/Hotline (khách cũ)
+tổng đài hdbank saison,Competitor_HDSaison,Vietnam,VI,110,90,90,50,70,110,260,90,50,30,50,30,40,40,50,30,170,170,50,70,30,30,70,50,LOW(0),Low Intent - Tổng đài/Hotline (khách cũ)
+số tổng đài ngân hàng hd saison,Competitor_HDSaison,Vietnam,VI,110,50,70,50,50,40,40,40,40,30,50,40,30,50,40,40,50,20,40,30,30,70,50,70,LOW(22),Low Intent - Tổng đài/Hotline (khách cũ)
+chăm sóc khách hàng của hd saison,Competitor_HDSaison,Vietnam,VI,20,10,10,10,10,10,10,10,10,10,10,10,10,10,0,10,10,0,10,10,10,10,10,10,LOW(0),Low Intent - Tổng đài/Hotline (khách cũ)
+tổng đài mcredit,Competitor_mCredit,Vietnam,VI,3600,1900,2900,2400,2400,2900,2900,2900,2400,2900,2900,2900,2900,2900,2900,2400,2900,3600,2900,2900,2400,2400,2900,3600,LOW(1),Low Intent - Tổng đài/Hotline (khách cũ)
+số tổng đài mcredit,Competitor_mCredit,Vietnam,VI,1000,590,1000,880,720,720,880,880,880,880,720,720,720,590,720,720,880,880,880,720,720,880,880,1000,LOW(1),Low Intent - Tổng đài/Hotline (khách cũ)
+hotline mcredit,Competitor_mCredit,Vietnam,VI,390,210,390,390,390,390,390,390,390,480,480,480,320,320,390,320,480,480,390,320,390,390,480,480,LOW(1),Low Intent - Tổng đài/Hotline (khách cũ)
+mcredit tổng đài,Competitor_mCredit,Vietnam,VI,210,110,170,140,140,170,170,170,170,170,110,140,110,110,170,140,140,170,140,110,140,140,210,260,LOW(1),Low Intent - Tổng đài/Hotline (khách cũ)
+số điện thoại tổng đài mcredit,Competitor_mCredit,Vietnam,VI,140,90,110,140,110,110,170,110,110,170,140,140,170,170,210,140,210,210,170,170,210,140,90,140,LOW(1),Low Intent - Tổng đài/Hotline (khách cũ)
+số điện thoại mcredit,Competitor_mCredit,Vietnam,VI,210,110,140,140,140,110,140,170,110,140,140,140,140,90,110,110,140,140,140,110,140,140,170,170,LOW(3),Low Intent - Tổng đài/Hotline (khách cũ)
+tổng đài ngân hàng mcredit,Competitor_mCredit,Vietnam,VI,90,70,140,110,90,110,140,110,110,110,110,90,90,90,110,110,90,110,90,70,90,110,110,90,LOW(2),Low Intent - Tổng đài/Hotline (khách cũ)
+tổng đài mcredit trả góp,Competitor_mCredit,Vietnam,VI,110,260,390,20,20,20,260,170,50,70,50,90,50,50,40,50,30,20,20,20,20,10,110,110,LOW(0),Low Intent - Tổng đài/Hotline (khách cũ)
+chăm sóc khách hàng mcredit,Competitor_mCredit,Vietnam,VI,70,40,40,50,90,50,50,70,50,70,50,50,50,40,70,50,50,70,70,70,70,90,90,110,LOW(1),Low Intent - Tổng đài/Hotline (khách cũ)
+mcredit có hỗ trợ nợ xấu không,Competitor_mCredit,Vietnam,VI,140,50,70,70,70,50,90,50,40,70,70,70,70,30,70,40,70,50,50,50,70,40,50,70,LOW(2),Negative - Nợ xấu
+cách xóa nợ xấu mcredit,Competitor_mCredit,Vietnam,VI,30,30,70,40,110,110,110,90,70,90,90,90,50,40,50,50,50,40,30,40,20,20,20,40,LOW(7),Negative - Nợ xấu
+số điện thoại ngân hàng mcredit,Competitor_mCredit,Vietnam,VI,90,50,40,50,70,70,70,50,50,70,50,70,40,40,50,40,50,50,40,40,40,30,50,50,LOW(1),Low Intent - Tổng đài/Hotline (khách cũ)
+số tổng đài ngân hàng mcredit,Competitor_mCredit,Vietnam,VI,70,50,90,70,40,50,70,50,40,70,50,40,40,50,40,50,30,50,50,40,30,30,70,70,LOW(2),Low Intent - Tổng đài/Hotline (khách cũ)
+công ty tài chính mb shinsei tuyển dụng,Competitor_mCredit,Vietnam,VI,30,10,20,20,30,30,50,40,30,40,10,10,20,20,30,20,30,30,30,20,20,10,10,10,LOW(3),Irrelevant - Tuyển dụng
+bảo hiểm khoản vay mcredit,Competitor_mCredit,Vietnam,VI,50,20,20,20,30,20,10,20,20,20,20,30,30,20,20,20,20,10,10,20,20,10,10,10,LOW(0),Irrelevant - Sản phẩm khác
+cty tài chính mcredit tuyển dụng,Competitor_mCredit,Vietnam,VI,20,10,50,20,50,30,40,30,20,20,20,30,10,10,10,10,10,20,10,10,10,10,10,10,LOW(2),Irrelevant - Tuyển dụng
+công ty tài chính mcredit tuyển dụng,Competitor_mCredit,Vietnam,VI,10,20,20,20,20,10,10,30,10,20,10,20,10,10,10,10,10,10,10,10,10,40,10,10,LOW(14),Irrelevant - Tuyển dụng
+cty tài chính mb shinsei tuyển dụng,Competitor_mCredit,Vietnam,VI,10,10,20,20,10,10,10,10,10,10,10,20,10,20,30,10,10,20,10,10,10,10,10,10,LOW(21),Irrelevant - Tuyển dụng
+công ty mcredit tuyển dụng,Competitor_mCredit,Vietnam,VI,10,10,20,10,10,20,20,20,10,10,10,10,20,10,10,20,10,10,10,10,10,20,10,10,LOW(5),Irrelevant - Tuyển dụng
