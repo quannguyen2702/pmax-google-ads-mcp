@@ -286,3 +286,18 @@ Trước khi deliver, verify output vs brief:
 **Travel:** Brand + destination + loại hình (tour/SIM/vé) + competitor
 **Retail:** Brand/platform + category + deal + competitor
 **Digital:** Brand + feature + pricing + use case + competitor
+
+---
+
+## LESSON LEARNED — KHÔNG TỰ DEBUG NHIỀU VÒNG
+
+Khi output bất thường (ví dụ: 78% keywords không có volume, data trống, số liệu lệch nhiều):
+
+1. **DỪNG LẠI** — không tự debug thêm
+2. **Hỏi Quân verify thủ công** trên Google Keyword Planner / Google Ads UI / tool gốc
+3. **Chờ confirm** trước khi chạy lại
+
+SAI: Output trống → tự test 3 time ranges → test 2 accounts → build script v2 → test account thứ 3 → tốn 5 vòng debug vô ích
+ĐÚNG: Output trống → "78% trống, có thể volume thấp thật hoặc bug. Quân check thử 2-3 keyword trên GKP trước được không?"
+
+Lý do: Nhiều trường hợp data đúng nhưng trông bất thường (volume thấp thật, ngành niche, brand mới). Tự debug nhiều vòng = tốn token + tốn thời gian + không giải quyết gì.
